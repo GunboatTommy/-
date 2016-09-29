@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>速度动画1(初步移入移出)</title>
+	<style type="text/css">
+	body{padding: 0px;margin:0px;}
+	#div1{
+		height: 200px;
+		width: 200px;
+		background: #abcedf;
+		position: relative;
+		left: -200px;	
+	}
+	#share{
+		display: block;
+		height: 150px;
+		width: 50px;
+		background: #666;
+		position: absolute;
+		left: 200px;
+		top: 20px;
+	}
+
+	</style>
+</head>
+<body>
+	<div id="div1">
+		<span id="share">分享</span>
+	</div>
+	<ul>
+		<li>定时器</li>
+	</ul>
+
+	<script type="text/javascript">
+window.onload = function(){
+	//A.获取元素并添加事件
+	var oDiv = document.getElementById('div1');
+	oDiv.onmouseover = function(){
+		getIn();
+	}
+	oDiv.onmouseout = function(){
+		getOut();
+	}
+
+	// B.3.1.设置变量
+	var timer = null;
+	//B.开始写移入函数
+	function getIn(){
+		// B.1.获取所需元素
+		var oDiv = document.getElementById('div1');
+		// B.4.函数一开始运行就先清除定时器
+		clearInterval(timer);
+		//B.2.设置定时器
+		//B.3.2.把setInterval赋值给timer
+		timer = setInterval(function(){ 
+			// B.3.判断当前位置是否等于目的地,是则清空定时器;否则继续执行+10;
+			if(oDiv.offsetLeft ==0){
+				clearInterval(timer);
+			}else{
+				oDiv.style.left = oDiv.offsetLeft + 10 +"px";
+			}	
+		},30)
+	}
+	
+	//C.开始写移出函数 getOut()
+	var timer = null;
+	
+	function getOut(){
+		clearInterval(timer);
+	timer = setInterval(function(){	
+			if(oDiv.offsetLeft ==-200){ //C.1.修改目的地
+				clearInterval(timer);
+			}else{
+			
+			oDiv.style.left = oDiv.offsetLeft - 10 +"px"; //C.2.修改方向
+			}	
+		},30)
+	}
+}
+	
+	</script>
+
+</body>
+</html>
+
+
+<!-- 思路：
+	
+A.获取元素并添加事件.
+
+B.开始写移入函数 getIn.
+	B.1.获取所需元素.
+	B.2.设置定时器(避免动画将无限执行)
+	原理：改变left值实现移动.left = 当前位置(offsetLeft+10)
+	B.3.判断当前位置是否等于目的地,是则清空定时器;否则继续执行+10;
+		B.3.1.设置变量timer=null.
+		B.3.2.把setInterval赋值给timer.		
+	B.4.	
+
+	新问题:这时候把速度10改成1,发现当鼠标在box上来回滑动时,运动速度加快.
+	分析:
+		每次触发getIn函数后都会启动一个定时器.理想情况下每次触发函数只启动一个定时器,走1px,
+			现在鼠标来回滑动N次,当前一个动作还没执行完,前一个计时器还没结束时,又再次触发getIn函数,
+			并开启新定时器产生新运动.
+		过程:
+			(第1次滑动触发函数)——启动定时器1——移动1**********尚未结束时********
+			*******(第2次滑动触发函数)——启动定时器2——移动2********尚未结束时****
+			*************(第3次滑动触发函数)——启动定时器3——移动3******尚未结束时
+			**********************(第4次滑动触发函数)***************************
+		结果:定时器累加,移动距离累加.
+
+	解决方法:
+		函数每一次开始运行就先清除定时器.函数再次触发时就马上清空上一轮的定时器.
+		过程:
+			 **(第1次滑动触发函数)——清除定时器*(*************)——启动定时器1(开始第1次)——移动1********
+			 **(第2次滑动触发函数)——清除定时器1(结束第1次运动)——启动定时器2(开始第2次)——移动2********
+			 **(第3次滑动触发函数)——清除定时器2(结束第2次运动)——启动定时器3(开始第3次)——移动3********
+		结果:每次触发函数后只有一个定时器正在运行并移动距离.避免了定时器累加,
+			 也避免移动距离累加.
+	
+
+C.开始写移出函数 getOut
+	代码同B,仅修改oDiv.offsetLeft目的地和移动的方向即可
+	C.1.修改目的地
+	C.2.修改方向
+
+ -->
