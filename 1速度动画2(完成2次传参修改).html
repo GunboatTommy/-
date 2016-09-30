@@ -109,7 +109,8 @@ C.移出
 	代码同B,仅修改oDiv.offsetLeft == 值和 移动的方向即可.
 D.第一次修改:
 	B,C代码几乎完全相同,可将不同的地方提出来作为参数传入,减少代码量。
-	这里可将移动方向和目标地点(oDiv.offsetLeft)和分别命名为speed,target进行传参,整改代码.
+	这里传入2个参数,speed表移动距离和方向,iTarget是目标地点,也是我们希望
+ 	oDiv运动结束后当下offsetLeft能达到的值
 	D.1.在onmouseover和onmouseout中替换参数。
 E.第二次修改：
 	在功能相同的情况下,传入的参数越少越好
