@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>缓冲动画</title>
+	<style type="text/css">
+	body{padding: 0px;margin:0px;}
+	#div1{
+		height: 200px;
+		width: 200px;
+		background: #abcedf;
+		position: relative;
+		left: -200px;	
+	}
+	#share{
+		display: block;
+		height: 150px;
+		width: 50px;
+		background: #666;
+		position: absolute;
+		left: 200px;
+		top: 20px;
+	}
+
+	</style>
+</head>
+<body>
+	<div id="div1">
+		<span id="share">分享</span>
+	</div>
+	<ul>
+		<li>定时器</li>
+	</ul>
+	<script type="text/javascript">
+	window.onload = function(){
+
+		var oDiv = document.getElementById("div1");
+		oDiv.onmouseover = function(){
+			getIn(0);//写目的地,不是起点
+		}
+		oDiv.onmouseout = function(){
+			getIn(-200);//写目的地,不是起点
+		}
+	var timer = null;
+	function getIn(iTarget){/*E.1.只保留目的地参数*/
+		// B.4.1.一开始就清除所有定时器
+		clearInterval(timer);
+		var oDiv = document.getElementById("div1");
+		timer = setInterval(function(){	
+			var speed = (iTarget-oDiv.offsetLeft)/20;/*A.*/
+			/*B.速度>0,取整,小于0则取余*/
+			// speed = speed >0?Math.ceil(speed):Math.floor(speed);
+				if(oDiv.offsetLeft == iTarget){
+					clearInterval(timer);
+				}
+				else{
+					oDiv.style.left = oDiv.offsetLeft+speed+"px";
+					alert(oDiv.offsetLeft);
+				}
+			},30)	
+		}
+	}
+	</script>
+</body>
+</html>
+<!-- 思路：
+A.修改var speed
+  该缓冲动画的原理:模仿火车进站,离站点越近速度越慢,远则快;
+  该例中,方块要从-200(offsetleft)的位置运动到0(offsetleft),
+  运动距离= 目标值-当前位置
+  speed = 运动距离/自定系数
+  var speed=(iTarget - oDiv.offsetLeft);   // A.1.一下子蹦完全程
+  var speed=(iTarget - oDiv.offsetLeft)/2; // A.2.进一步减慢速度
+
+
+B.增加判断,使移动后left的值能到达到整数.如0和200<div id="div1" style="left: -200px;">
+	speed = speed >0?Math.ceil(speed):Math.floor(speed);
+	
+
+总结：
+	缓冲动画与速度动画的异同：
+同:	移入移出的JS代码基本相同
+异: 速度的设定.
+	缓冲动画的速度
+	speed=(目标值-当前位置)/自定系数.且需要利用Math取整.无需判断speed的方向
+	速度动画的速度是直接给定的,方向由目标值和当前位置的大小比较结果决定.
+
+向右/左运动的时候，(分别为0和-200)，但以向左运动为例,iTarget保持在0不变,向左运动中offsetLeft的值逐渐在变小,根据speed=(iTarget - oDiv.offsetLeft)/2，speed最终也会经历由大变小,进一步减慢速度s相当于一个减速运动，自然就是由快变慢了		
+ -->
